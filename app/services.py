@@ -11,6 +11,14 @@ users: list[User] = [
 ]
 
 
+def get_all_users() -> list[User]:
+    with get_connection() as conn:
+        with conn.cursor(row_factory=dict_row) as cur:
+            cur.execute("SELECT id, name, role FROM users")
+
+            return cur.fetchall()
+
+
 def get_user(user_id: int) -> User:
     with get_connection() as conn:
         with conn.cursor(row_factory=dict_row) as cur:

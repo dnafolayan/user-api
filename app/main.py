@@ -2,20 +2,20 @@ from fastapi import FastAPI, HTTPException, status
 
 from .exceptions import UserNotFound
 from .models import UserCreate, UserResponse
-from .services import create_user, delete_user, get_user, update_user, users
+from .services import create_user, delete_user, get_all_users, get_user, update_user
 
 app = FastAPI()
 
 
 @app.get("/users", response_model=list[UserResponse])
 def get_users_endpoint():
-    return users
+    return get_all_users()
 
 
 @app.get("/users/{user_id}", response_model=UserResponse)
 def get_user_by_id_endpoint(user_id: int):
     try:
-        return get_user(user_id, users)
+        return get_user(user_id)
     except UserNotFound:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
