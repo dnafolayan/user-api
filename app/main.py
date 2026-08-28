@@ -22,29 +22,29 @@ def get_user_by_id_endpoint(user_id: int):
         )
 
 
-@app.post("/users", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-def create_user_endpoint(user: UserCreate):
-    return create_user(user.name)
+# @app.post("/users", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+# def create_user_endpoint(user: UserCreate):
+#     return create_user(user.name)
 
 
-@app.put("/users/{user_id}", response_model=UserResponse)
-def update_user_endpoint(user_id: int, data: UserCreate):
-    try:
-        return update_user(user_id, data, users)
-    except UserNotFound:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
-        )
+# @app.put("/users/{user_id}", response_model=UserResponse)
+# def update_user_endpoint(user_id: int, data: UserCreate):
+#     try:
+#         return update_user(user_id, data, users)
+#     except UserNotFound:
+#         raise HTTPException(
+#             status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+#         )
 
 
-@app.delete(
-    "/users/{user_id}",
-    status_code=status.HTTP_204_NO_CONTENT,
-)
-def delete_user_endpoint(user_id: int):
-    try:
-        delete_user(user_id, users)
-    except UserNotFound:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
-        )
+# @app.delete(
+#     "/users/{user_id}",
+#     status_code=status.HTTP_204_NO_CONTENT,
+# )
+# def delete_user_endpoint(user_id: int):
+#     try:
+#         delete_user(user_id, users)
+#     except UserNotFound:
+#         raise HTTPException(
+#             status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+#         )

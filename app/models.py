@@ -18,6 +18,6 @@ class UserCreate(BaseModel):
 
 class UserResponse(BaseModel):
     id: int
-    name: str
+    name: str = Field(min_length=2, max_length=50)
     age: int = Field(ge=0, le=125)
     role: Literal["admin", "user"]

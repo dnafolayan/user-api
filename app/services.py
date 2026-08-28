@@ -4,26 +4,26 @@ from .database import get_connection
 from .exceptions import UserNotFound
 from .models import User, UserCreate
 
-users: list[User] = [
-    User(id=1, name="Divine"),
-    User(id=2, name="Alex"),
-    User(id=3, name="Sarah"),
-]
+# users: list[User] = [
+#     User(id=1, name="Divine"),
+#     User(id=2, name="Alex"),
+#     User(id=3, name="Sarah"),
+# ]
 
 
 def get_all_users() -> list[User]:
     with get_connection() as conn:
         with conn.cursor(row_factory=dict_row) as cur:
-            cur.execute("SELECT id, name, role FROM users")
-
-            return cur.fetchall()
+            cur.execute("SELECT id, name, age, role FROM users;")
+            recs = cur.fetchall()
+            return recs
 
 
 def get_user(user_id: int) -> User:
     with get_connection() as conn:
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute(
-                "SELECT id, name, age, role FROM users WHERE id = %s", (user_id,)
+                "SELECT id, name, age, role FROM users WHERE id = %s;", (user_id,)
             )
             rec = cur.fetchone()
 
