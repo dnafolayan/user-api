@@ -1,3 +1,6 @@
+from psycopg.rows import dict_row
+
+from .database import get_connection
 from .exceptions import UserNotFound
 from .models import User, UserCreate
 
@@ -8,12 +11,18 @@ users: list[User] = [
 ]
 
 
-def get_user(user_id: int, users: list[User]) -> User:
-    for user in users:
-        if user.id == user_id:
-            return user
+def get_user(user_id: int) -> User:
+    with get_connection() as conn:
+        with conn.cursor(row_factory=dict_row) as cur:
+            cur.execute(
+                "SELECT id, name, age, role FROM users WHERE id = %s", (user_id,)
+            )
+            rec = cur.fetchone()
 
-    raise UserNotFound(f"User with id: {user_id} does not exist")
+            if rec == None:
+                raise UserNotFound(f"User with id: {user_id} does not exist")
+
+            return User(**rec)
 
 
 def create_user(name: str) -> User:
