@@ -34,12 +34,22 @@ def get_user(user_id: int) -> User:
             return User(**rec)
 
 
-def create_user(name: str) -> User:
-    new_id: int = users[-1].id + 1
-    new_user: User = User(id=new_id, name=name)
-    users.append(new_user)
+def create_user(user: UserCreate) -> User:
+    with get_connection() as conn:
+        with conn.cursor(row_factory=dict_row) as cur:
+            cur.execute(
+                """
+                INSERT INTO users (name, age, role)
+                VALUES (%s, %s, %s)
+                RETURNING id, name, age, role;
+                """,
+                (user.name, user.age, user.role),
+            )
 
-    return new_user
+            rec = cur.fetchone()
+            conn.commit()
+
+            return User(**rec)
 
 
 def update_user(user_id: int, data: UserCreate, users: list[User]) -> User:
