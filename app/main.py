@@ -22,9 +22,9 @@ def get_user_by_id_endpoint(user_id: int):
         )
 
 
-# @app.post("/users", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-# def create_user_endpoint(user: UserCreate):
-#     return create_user(user.name)
+@app.post("/users", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+def create_user_endpoint(user: UserCreate):
+    return create_user(user)
 
 
 # @app.put("/users/{user_id}", response_model=UserResponse)

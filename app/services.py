@@ -16,7 +16,8 @@ def get_all_users() -> list[User]:
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute("SELECT id, name, age, role FROM users;")
             recs = cur.fetchall()
-            return recs
+
+            return [User(**rec) for rec in recs]
 
 
 def get_user(user_id: int) -> User:
