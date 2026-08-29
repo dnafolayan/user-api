@@ -27,14 +27,14 @@ def create_user_endpoint(user: UserCreate):
     return create_user(user)
 
 
-# @app.put("/users/{user_id}", response_model=UserResponse)
-# def update_user_endpoint(user_id: int, data: UserCreate):
-#     try:
-#         return update_user(user_id, data, users)
-#     except UserNotFound:
-#         raise HTTPException(
-#             status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
-#         )
+@app.put("/users/{user_id}", response_model=UserResponse)
+def update_user_endpoint(user_id: int, data: UserCreate):
+    try:
+        return update_user(user_id, data)
+    except UserNotFound:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+        )
 
 
 # @app.delete(

@@ -52,13 +52,25 @@ def create_user(user: UserCreate) -> User:
             return User(**rec)
 
 
-def update_user(user_id: int, data: UserCreate, users: list[User]) -> User:
-    for user in users:
-        if user.id == user_id:
-            user.name = data.name
-            return user
+def update_user(user_id: int, data: UserCreate) -> User:
+    with get_connection() as conn:
+        with conn.cursor(row_factory=dict_row) as cur:
+            cur.execute(
+                """
+                UPDATE users
+                SET name = %s, age = %s, role = %s
+                WHERE id = %s
+                RETURNING id, name, age, role;
+                """,
+                (data.name, data.age, data.role, user_id),
+            )
 
-    raise UserNotFound(f"User with id: {user_id} does not exist")
+            rec = cur.fetchone()
+            if rec is None:
+                raise UserNotFound(f"User with id: {user_id} does not exist")
+
+            conn.commit()
+            return User(**rec)
 
 
 def delete_user(user_id: int, users: list[User]) -> None:
