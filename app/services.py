@@ -1,6 +1,6 @@
 from psycopg.rows import dict_row
 
-from .database import get_connection
+from .database import pool
 from .exceptions import UserNotFound
 from .models import User, UserCreate
 
@@ -12,7 +12,7 @@ from .models import User, UserCreate
 
 
 def get_all_users() -> list[User]:
-    with get_connection() as conn:
+    with pool.connection() as conn:
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute("SELECT id, name, age, role FROM users;")
             recs = cur.fetchall()
@@ -21,7 +21,7 @@ def get_all_users() -> list[User]:
 
 
 def get_user(user_id: int) -> User:
-    with get_connection() as conn:
+    with pool.connection() as conn:
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute(
                 "SELECT id, name, age, role FROM users WHERE id = %s;", (user_id,)
@@ -35,7 +35,7 @@ def get_user(user_id: int) -> User:
 
 
 def create_user(user: UserCreate) -> User:
-    with get_connection() as conn:
+    with pool.connection() as conn:
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute(
                 """
@@ -53,7 +53,7 @@ def create_user(user: UserCreate) -> User:
 
 
 def update_user(user_id: int, data: UserCreate) -> User:
-    with get_connection() as conn:
+    with pool.connection() as conn:
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute(
                 """
@@ -74,7 +74,7 @@ def update_user(user_id: int, data: UserCreate) -> User:
 
 
 def delete_user(user_id: int) -> None:
-    with get_connection() as conn:
+    with pool.connection() as conn:
         with conn.cursor() as cur:
             cur.execute(
                 """
