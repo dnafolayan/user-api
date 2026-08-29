@@ -37,14 +37,14 @@ def update_user_endpoint(user_id: int, data: UserCreate):
         )
 
 
-# @app.delete(
-#     "/users/{user_id}",
-#     status_code=status.HTTP_204_NO_CONTENT,
-# )
-# def delete_user_endpoint(user_id: int):
-#     try:
-#         delete_user(user_id, users)
-#     except UserNotFound:
-#         raise HTTPException(
-#             status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
-#         )
+@app.delete(
+    "/users/{user_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+def delete_user_endpoint(user_id: int):
+    try:
+        delete_user(user_id)
+    except UserNotFound:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+        )

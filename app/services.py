@@ -73,10 +73,20 @@ def update_user(user_id: int, data: UserCreate) -> User:
             return User(**rec)
 
 
-def delete_user(user_id: int, users: list[User]) -> None:
-    for user in users:
-        if user.id == user_id:
-            users.remove(user)
-            return
+def delete_user(user_id: int) -> None:
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                DELETE FROM users
+                WHERE id = %s
+                RETURNING id;
+                """,
+                (user_id,),
+            )
 
-    raise UserNotFound(f"User with id: {user_id} does not exist")
+            rec = cur.fetchone()
+            if rec is None:
+                raise UserNotFound(f"User with id: {user_id} does not exist")
+
+            conn.commit()
