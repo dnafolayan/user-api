@@ -1,10 +1,21 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, HTTPException, status
 
+from .database import pool
 from .exceptions import UserNotFound
 from .models import UserCreate, UserResponse
 from .services import create_user, delete_user, get_all_users, get_user, update_user
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    pool.open()
+    yield
+    pool.close()
+
+
+app = FastAPI(lifespan=lifespan)
 
 
 @app.get("/users", response_model=list[UserResponse])
