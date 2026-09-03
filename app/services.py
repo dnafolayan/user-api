@@ -4,12 +4,6 @@ from .database import pool
 from .exceptions import UserNotFound
 from .models import User, UserCreate
 
-# users: list[User] = [
-#     User(id=1, name="Divine"),
-#     User(id=2, name="Alex"),
-#     User(id=3, name="Sarah"),
-# ]
-
 
 def get_all_users() -> list[User]:
     with pool.connection() as conn:
