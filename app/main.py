@@ -10,23 +10,25 @@ from .services import create_user, delete_user, get_all_users, get_user, update_
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    pool.open()
+    await pool.open()
     yield
-    pool.close()
+    await pool.close()
 
 
 app = FastAPI(lifespan=lifespan)
 
 
 @app.get("/users", response_model=list[UserResponse])
-def get_users_endpoint():
-    return get_all_users()
+async def get_users_endpoint():
+    users: list[UserResponse] = await get_all_users()
+    return users
 
 
 @app.get("/users/{user_id}", response_model=UserResponse)
-def get_user_by_id_endpoint(user_id: int):
+async def get_user_by_id_endpoint(user_id: int):
     try:
-        return get_user(user_id)
+        user: UserResponse = await get_user(user_id)
+        return user
     except UserNotFound:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
@@ -34,14 +36,16 @@ def get_user_by_id_endpoint(user_id: int):
 
 
 @app.post("/users", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-def create_user_endpoint(user: UserCreate):
-    return create_user(user)
+async def create_user_endpoint(user: UserCreate):
+    user: UserResponse = await create_user(user)
+    return user
 
 
 @app.put("/users/{user_id}", response_model=UserResponse)
-def update_user_endpoint(user_id: int, data: UserCreate):
+async def update_user_endpoint(user_id: int, data: UserCreate):
     try:
-        return update_user(user_id, data)
+        user: UserResponse = await update_user(user_id, data)
+        return user
     except UserNotFound:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
@@ -52,9 +56,9 @@ def update_user_endpoint(user_id: int, data: UserCreate):
     "/users/{user_id}",
     status_code=status.HTTP_204_NO_CONTENT,
 )
-def delete_user_endpoint(user_id: int):
+async def delete_user_endpoint(user_id: int):
     try:
-        delete_user(user_id)
+        await delete_user(user_id)
     except UserNotFound:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
